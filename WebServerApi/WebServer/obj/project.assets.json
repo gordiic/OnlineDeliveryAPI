@@ -7974,11 +7974,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\WebServer\\WebServer.csproj",
+      "projectUniqueName": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\WebServer\\WebServer.csproj",
       "projectName": "WebServer",
-      "projectPath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\WebServer\\WebServer.csproj",
+      "projectPath": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\WebServer\\WebServer.csproj",
       "packagesPath": "C:\\Users\\Nebojsa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\WebServer\\obj\\",
+      "outputPath": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\WebServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

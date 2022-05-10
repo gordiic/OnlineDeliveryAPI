@@ -199,11 +199,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\proba\\proba.csproj",
+      "projectUniqueName": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\proba\\proba.csproj",
       "projectName": "proba",
-      "projectPath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\proba\\proba.csproj",
+      "projectPath": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\proba\\proba.csproj",
       "packagesPath": "C:\\Users\\Nebojsa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\proba\\obj\\",
+      "outputPath": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\proba\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5C45QbgLOScJB1Zs/1ddDdRPrRO8iwOeHZPbIk3kPma35FvFzk/7tptpIQwu2CpjrCC7jhK6CdkD+m5BQswJGA==",
+  "dgSpecHash": "bjVcXcBxg1lZ/roywosI+LmSxf4TZxM6Iulh/AyWHxHdaG3dWNFDw3uLBhBxR5lAR5xb98BjsyJ/B6oNhh+ZJg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\WebServer\\WebServer.csproj",
+  "projectFilePath": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\WebServer\\WebServer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nebojsa\\.nuget\\packages\\automapper\\5.0.2\\automapper.5.0.2.nupkg.sha512",
     "C:\\Users\\Nebojsa\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",

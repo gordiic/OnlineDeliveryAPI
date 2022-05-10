@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KOM9bfTT6Ym6R+7ivSXGXAjuTfRvkBlWJYvFCF8fHHaZ+oYv+hF46FKi6Pg+CkxM5BDmkASpTVYT0T9MC397PA==",
+  "dgSpecHash": "GijjG9EgEEfiylhB0chMwipz3R34UngUpigtBnhxZK3jVA8ZuDbMMT2Uoh9j87/BZZ4eaLSSMjUfV/pWiLvzlA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\proba\\proba.csproj",
+  "projectFilePath": "C:\\Users\\Nebojsa\\Desktop\\OnlineDeliveryAPI\\WebServerApi\\proba\\proba.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nebojsa\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\Nebojsa\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
