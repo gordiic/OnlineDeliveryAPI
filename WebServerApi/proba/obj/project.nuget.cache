@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "KOM9bfTT6Ym6R+7ivSXGXAjuTfRvkBlWJYvFCF8fHHaZ+oYv+hF46FKi6Pg+CkxM5BDmkASpTVYT0T9MC397PA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Nebojsa\\Desktop\\angularVjezba\\WebServerApi\\proba\\proba.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Nebojsa\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\Nebojsa\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Nebojsa\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
+    "C:\\Users\\Nebojsa\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\5.6.3\\swashbuckle.aspnetcore.swagger.5.6.3.nupkg.sha512",
+    "C:\\Users\\Nebojsa\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\5.6.3\\swashbuckle.aspnetcore.swaggergen.5.6.3.nupkg.sha512",
+    "C:\\Users\\Nebojsa\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\5.6.3\\swashbuckle.aspnetcore.swaggerui.5.6.3.nupkg.sha512"
+  ],
+  "logs": []
+}
