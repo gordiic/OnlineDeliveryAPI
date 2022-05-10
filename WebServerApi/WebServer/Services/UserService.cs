@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -44,7 +45,7 @@ namespace WebServer.Services
 				}
 			}
 			//byte[] niz = BCrypt.Generate(BCrypt.PasswordToByteArray(newUser.Password.ToCharArray()), BCrypt.PasswordToByteArray(_secretKey.ToString().ToCharArray()),16);
-			BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+			newUser.Password= BCrypt.Net.BCrypt.HashPassword(newUser.Password);
 			EntityEntry s = _dbContext.users.Add(newUser);
 			try{
 				_dbContext.SaveChanges();
@@ -65,8 +66,8 @@ namespace WebServer.Services
 			{
 				List<Claim> claims = new List<Claim>();
 				claims.Add(new Claim(ClaimTypes.Role, registredUser.AccountStatus));
-				claims.Add(new Claim(ClaimTypes.Role, registredUser.UserType));
-				claims.Add(new Claim(ClaimTypes.Role, registredUser.Id.ToString()));
+				claims.Add(new Claim(ClaimTypes.AuthorizationDecision, registredUser.UserType));
+				claims.Add(new Claim(ClaimTypes.NameIdentifier, registredUser.Id.ToString()));
 
 				SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey.Value));
 				var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -82,9 +83,59 @@ namespace WebServer.Services
 			return null;
 		}
 
-		public bool UpdateProfile(UserDto u)
+		public UserDto UpdateProfile(UserDto user, IHeaderDictionary headers)
 		{
-			throw new NotImplementedException();
+			User newUser = _mapper.Map<User>(user);
+
+			if (String.IsNullOrWhiteSpace(newUser.Password) || String.IsNullOrWhiteSpace(newUser.UserName) || String.IsNullOrWhiteSpace(newUser.LastName) ||
+				String.IsNullOrWhiteSpace(newUser.Name) || String.IsNullOrWhiteSpace(newUser.UserType.ToString()) || String.IsNullOrWhiteSpace(newUser.AccountStatus.ToString()))
+			{
+				if (newUser.AccountStatus == Models.AccountStatus.declined.ToString() || newUser.Password.Length < 7 || !newUser.Email.Contains('@') || !newUser.Email.Contains('.'))
+				{
+					return null;
+				}
+			}
+			var handler = new JwtSecurityTokenHandler();
+			string authHeader = headers["Authorization"];
+			authHeader = authHeader.Replace("Bearer ", "");
+			var jsonToken = handler.ReadToken(authHeader);
+			var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+			var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+			int id = int.Parse(stringId);
+			newUser.Id = id;
+			newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+			try
+			{
+				//_dbContext.users.Update(newUser);
+				//var result = _dbContext.users.Where(u => u.Id == id).ToList();
+				EntityEntry ee = _dbContext.users.Update(newUser);
+				_dbContext.SaveChanges();
+				return _mapper.Map<UserDto>(ee.Entity);
+
+			}
+			catch (Exception e)
+			{
+				return null;
+			}
+		}
+
+		public UserDto GetProfile(string token)
+		{
+
+			var handler = new JwtSecurityTokenHandler();
+			var jsonToken = handler.ReadToken(token);
+			var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+			var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+			int id = int.Parse(stringId);
+			
+			try
+			{
+				var result = _dbContext.users.Where(u => u.Id == id).ToList();
+				return _mapper.Map < UserDto > (result[0]);
+			}catch(Exception e)
+			{
+				return null;
+			}
 		}
 	}
 }

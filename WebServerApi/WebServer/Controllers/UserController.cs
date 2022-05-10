@@ -43,11 +43,16 @@ namespace WebServer.Controllers
 		[HttpPost]
 		[Route("updateProfile")]
 		public IActionResult UpdateProfile([FromBody]UserDto user )
-		{
-			IHeaderDictionary h =  Request.Headers;
-			return Ok(user);
+		{	
+			return Ok(_userService.UpdateProfile(user, Request.Headers));
 		}
 
-		
+		[HttpGet]
+		[Route("getProfile")]
+		public IActionResult GetProfile(string token)
+		{
+			return Ok(_userService.GetProfile(token));
+		}
+
 	}
 }

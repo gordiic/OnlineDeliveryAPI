@@ -9,7 +9,7 @@ using WebServer.DB;
 namespace WebServer.Migrations
 {
     [DbContext(typeof(DataBaseUserContext))]
-    [Migration("20220509154816_migration1")]
+    [Migration("20220510111436_migration1")]
     partial class migration1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,8 +140,8 @@ namespace WebServer.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(450)");

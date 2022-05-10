@@ -17,7 +17,7 @@ namespace WebServer.DB.Configurations
 			builder.Property(x => x.Id).ValueGeneratedOnAdd();
 			builder.HasIndex(x => x.UserName).IsUnique();//kazem da je maks duzina 30 karaktera
 			builder.HasIndex(x => x.Email).IsUnique();
-			builder.Property(x => x.Password).HasMaxLength(30);
+			builder.Property(x => x.Password).HasMaxLength(450);
 			builder.Property(x => x.Name).HasMaxLength(30);
 			builder.Property(x => x.LastName).HasMaxLength(30);
 			builder.Property(x => x.BirthDate);

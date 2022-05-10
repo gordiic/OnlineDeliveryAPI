@@ -34,7 +34,7 @@ namespace WebServer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     BirthDate = table.Column<string>(type: "nvarchar(max)", nullable: true),

@@ -138,8 +138,8 @@ namespace WebServer.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Password")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(450)");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace WebServer.Interfaces
 	{
 		UserDto Register(UserDto user);
 		TokenDto Login(UserDto user);
-		bool UpdateProfile(UserDto user);
-
+		UserDto UpdateProfile(UserDto user, IHeaderDictionary headers);
+		UserDto GetProfile(string token);
 	}
 }
