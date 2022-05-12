@@ -65,8 +65,8 @@ namespace WebServer.Services
 			if (registredUser!=null && BCrypt.Net.BCrypt.Verify(newUser.Password, registredUser.Password))
 			{
 				List<Claim> claims = new List<Claim>();
-				claims.Add(new Claim(ClaimTypes.Role, registredUser.AccountStatus));
-				claims.Add(new Claim(ClaimTypes.AuthorizationDecision, registredUser.UserType));
+				claims.Add(new Claim(ClaimTypes.AuthorizationDecision, registredUser.AccountStatus));
+				claims.Add(new Claim(ClaimTypes.Role, registredUser.UserType));
 				claims.Add(new Claim(ClaimTypes.NameIdentifier, registredUser.Id.ToString()));
 
 				SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey.Value));

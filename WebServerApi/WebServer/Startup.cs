@@ -53,7 +53,10 @@ namespace WebServer
 				   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]))//navodimo privatni kljuc kojim su potpisani nasi tokeni
 			   };
 		   });
-			services.AddScoped< IUserService , UserService >();
+			services.AddScoped<IUserService , UserService>();
+			services.AddScoped<IProductService, ProductService>();
+			services.AddScoped<IOrderService, OrderService>();
+
 			services.AddDbContext<DataBaseUserContext>(options => options.UseSqlServer(Configuration.GetConnectionString("OnlineDostavaDataBase")));
 			var mapperConfig = new MapperConfiguration(mc =>
 			{

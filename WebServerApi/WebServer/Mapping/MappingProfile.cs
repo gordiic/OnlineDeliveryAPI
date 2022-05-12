@@ -18,6 +18,8 @@ namespace WebServer.Mapping
 			CreateMap<Product, ProductDto>().ReverseMap();
 			CreateMap<OrderProduct, OrderProductDto>().ReverseMap();
 			CreateMap<Token, TokenDto>().ReverseMap();
+			CreateMap<List<Product>, List<ProductDto>>().ReverseMap();
+			CreateMap<List<Order>, List<OrderDto>>().ReverseMap();
 
 		}
 	}
