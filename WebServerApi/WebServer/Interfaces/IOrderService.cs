@@ -11,8 +11,9 @@ namespace WebServer.Interfaces
 	{
 		OrderDto AddOrder(OrderDto order, IHeaderDictionary headers);
 
-		IEnumerable<OrderDto> GetUserOrders(IHeaderDictionary headers);
+		IEnumerable<OrderDto> GetUserOrders(string token);
 
-		OrderDto AcceptOrder(OrderDto order, IHeaderDictionary headers);
+		OrderDto AcceptOrder(int id, string token);
+		IEnumerable<OrderDto> GetNewOrders(IHeaderDictionary headers);
 	}
 }

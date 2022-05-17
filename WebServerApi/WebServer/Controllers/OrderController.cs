@@ -28,16 +28,26 @@ namespace WebServer.Controllers
 
 		[HttpGet]
 		[Route("getuserorders")]
-		public IActionResult GetUserOrder()
+		public IActionResult GetUserOrder(string token)
 		{
-			return Ok(_orderService.GetUserOrders(Request.Headers));
+			List<OrderDto> o = _orderService.GetUserOrders(token).ToList();
+			return Ok(o);
+		}
+
+		[HttpPost]
+		[Route("getneworders")]
+		public IActionResult GetNewrOrders()
+		{
+			return Ok(_orderService.GetNewOrders(Request.Headers));
 		}
 
 		[HttpPost]
 		[Route("acceptorder")]
-		public IActionResult AcceptOrder(OrderDto order)
+		public IActionResult AcceptOrder(int id, string token)
 		{
-			return Ok(_orderService.AcceptOrder(order, Request.Headers));
+			return Ok(_orderService.AcceptOrder(id,token));
 		}
+
+
 	}
 }

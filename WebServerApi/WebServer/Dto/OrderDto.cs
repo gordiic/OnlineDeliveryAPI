@@ -20,7 +20,7 @@ namespace WebServer.Dto
 		public int DelivererId { get; set; }
 		public int UserId { get; set; }
 		public UserDto UserDto { get; set; }
-
+		//
 		public OrderDto(int id, List<OrderProductDto> products, string address, string comment, double price, int deliverTime, bool done,bool accepted, string acceptanceTime, int delivererId, int userId)
 		{
 			this.Id = id;
