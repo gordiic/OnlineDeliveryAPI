@@ -13,5 +13,9 @@ namespace WebServer.Interfaces
 		TokenDto Login(UserDto user);
 		UserDto UpdateProfile(UserDto user, IHeaderDictionary headers);
 		UserDto GetProfile(string token);
+		OrderDto CheckDeliverStatus(string token);
+		UserDto VerificateUser(string accountStatus, int id);
+		List<UserDto> GetUsers();
+
 	}
 }

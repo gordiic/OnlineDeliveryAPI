@@ -47,5 +47,32 @@ namespace WebServer.Mapping
 
 			return ret;
 		}
+
+		public List<UserDto> MapUserToUserDto(List<User> users)
+		{
+			List<UserDto> ret = new List<UserDto>();
+
+			foreach (User u in users)
+			{
+				UserDto od = new UserDto();
+				od.AccountStatus = u.AccountStatus;
+				od.Address = u.Address;
+				od.BirthDate = u.BirthDate;
+				od.Email = u.Email;
+				od.Id = u.Id;
+				od.LastName = u.LastName;
+				od.Name = u.Name;
+				od.Orders = new List<OrderDto>();
+				od.Password = "";
+				od.UserName = u.UserName;
+				od.UserType = u.UserType;
+				//od.Image = u.Image;
+				//treba dodati za sliku i dodati za listu nekad
+				ret.Add(od);
+			}
+
+
+			return ret;
+		}
 	}
 }

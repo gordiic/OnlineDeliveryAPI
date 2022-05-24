@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebServer.Migrations
 {
@@ -40,7 +41,8 @@ namespace WebServer.Migrations
                     BirthDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     UserType = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
-                    AccountStatus = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    AccountStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {

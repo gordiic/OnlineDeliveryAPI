@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace WebServer.Models
@@ -20,13 +21,15 @@ namespace WebServer.Models
 		public string UserType { get; set; }
 		public string AccountStatus { get; set; }
 		public ICollection<Order> Orders { get; set; }
+		public byte[] Image { get; set; }
+
 
 		public User()
 		{
 
 		}
 
-		public User(int id, string userName, string email, string password, string name, string lastName, string birthDate, string address, string userType, string accountStatus)
+		public User(int id, string userName, string email, string password, string name, string lastName, string birthDate, string address, string userType, string accountStatus, string image)
 		{
 			this.Id = id;
 			this.UserName = userName;
@@ -40,6 +43,7 @@ namespace WebServer.Models
 			//this.AccountStatus = (AccountStatus)Enum.Parse(typeof(AccountStatus), accountStatus);
 			this.UserType = userType;
 			this.AccountStatus = accountStatus;
+			this.Image = Encoding.ASCII.GetBytes(image);
 		}
 	}
 }

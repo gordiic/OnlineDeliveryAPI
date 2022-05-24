@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace WebServer.Dto
@@ -18,6 +19,7 @@ namespace WebServer.Dto
 		public string Address { get; set; }
 		public string UserType { get; set; }
 		public string AccountStatus { get; set; }
+		public string Image { get; set; }
 
 		public ICollection<OrderDto> Orders { get; set; }
 
@@ -26,7 +28,7 @@ namespace WebServer.Dto
 
 		}
 
-		public UserDto(int id, string userName, string email, string password, string name, string lastName, string birthDate, string address, string userType, string accountStatus)
+		public UserDto(int id, string userName, string email, string password, string name, string lastName, string birthDate, string address, string userType, string accountStatus,string image)
 		{
 			this.Id = id;
 			this.UserName = userName;
@@ -40,6 +42,7 @@ namespace WebServer.Dto
 			//this.AccountStatus = (AccountStatus)Enum.Parse(typeof(AccountStatus), accountStatus);
 			this.UserType = userType;
 			this.AccountStatus = accountStatus;
+			this.Image = image;
 		}
 	}
 }

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using WebServer.DB;
 using WebServer.Dto;
 using WebServer.Interfaces;
+using WebServer.Mapping;
 using WebServer.Models;
 
 namespace WebServer.Services
@@ -23,12 +24,15 @@ namespace WebServer.Services
         private readonly IMapper _mapper;
         private readonly DataBaseUserContext _dbContext;
 		private readonly IConfigurationSection _secretKey;
+		private readonly MyMapper _mymapper;
+
 
 		public UserService(IMapper mapper, DataBaseUserContext dbContext, Microsoft.Extensions.Configuration.IConfiguration config)
 		{
             _mapper = mapper;
             _dbContext = dbContext;
 			_secretKey = config.GetSection("SecretKey");
+			_mymapper = new MyMapper();
         }
 
 		
@@ -36,7 +40,8 @@ namespace WebServer.Services
         public UserDto Register(UserDto user)
 		{
             User newUser = _mapper.Map<User>(user);
-            if(String.IsNullOrWhiteSpace(newUser.Password) || String.IsNullOrWhiteSpace(newUser.UserName) || String.IsNullOrWhiteSpace(newUser.LastName) ||
+			newUser.Image = Encoding.ASCII.GetBytes(user.Image);
+			if (String.IsNullOrWhiteSpace(newUser.Password) || newUser.Image.Length==0 || String.IsNullOrWhiteSpace(newUser.UserName) || String.IsNullOrWhiteSpace(newUser.LastName) ||
                 String.IsNullOrWhiteSpace(newUser.Name) || String.IsNullOrWhiteSpace(newUser.UserType.ToString()) || String.IsNullOrWhiteSpace(newUser.AccountStatus.ToString()))
 			{
                 if(newUser.AccountStatus == Models.AccountStatus.declined.ToString() || newUser.Password.Length<7 || !newUser.Email.Contains('@') || !newUser.Email.Contains('.'))
@@ -53,7 +58,9 @@ namespace WebServer.Services
 			{
 				return null;
 			}
-            return _mapper.Map<UserDto>(newUser);
+			UserDto ret = _mapper.Map<UserDto>(newUser);
+			ret.Image = Encoding.Default.GetString(newUser.Image);
+			return ret;
 		}
 
 		public TokenDto Login(UserDto user)
@@ -86,8 +93,9 @@ namespace WebServer.Services
 		public UserDto UpdateProfile(UserDto user, IHeaderDictionary headers)
 		{
 			User newUser = _mapper.Map<User>(user);
+			newUser.Image = Encoding.ASCII.GetBytes(user.Image);
 
-			if (String.IsNullOrWhiteSpace(newUser.Password) || String.IsNullOrWhiteSpace(newUser.UserName) || String.IsNullOrWhiteSpace(newUser.LastName) ||
+			if (String.IsNullOrWhiteSpace(newUser.Password)|| newUser.Image.Length==0 || String.IsNullOrWhiteSpace(newUser.UserName) || String.IsNullOrWhiteSpace(newUser.LastName) ||
 				String.IsNullOrWhiteSpace(newUser.Name) || String.IsNullOrWhiteSpace(newUser.UserType.ToString()) || String.IsNullOrWhiteSpace(newUser.AccountStatus.ToString()))
 			{
 				if (newUser.AccountStatus == Models.AccountStatus.declined.ToString() || newUser.Password.Length < 7 || !newUser.Email.Contains('@') || !newUser.Email.Contains('.'))
@@ -131,11 +139,70 @@ namespace WebServer.Services
 			try
 			{
 				var result = _dbContext.users.Where(u => u.Id == id).ToList();
-				return _mapper.Map < UserDto > (result[0]);
+				UserDto ret = _mapper.Map<UserDto>(result[0]);
+				ret.Image = Encoding.Default.GetString(result[0].Image);
+				return ret;
 			}catch(Exception e)
 			{
 				return null;
 			}
+		}
+
+		public OrderDto CheckDeliverStatus(string token)
+		{
+			var handler = new JwtSecurityTokenHandler();
+			var jsonToken = handler.ReadToken(token);
+			var tokenS = handler.ReadToken(token) as JwtSecurityToken;
+			var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
+			int id = int.Parse(stringId);
+
+			var result = _dbContext.orders.Where(o => (o.DelivererId == id || o.UserId == id)).ToList() ;
+			if (result.Count == 0)
+			{
+				return null;
+			}
+			DateTime time;
+			DateTime now = DateTime.Now;
+			foreach(Order o in result)
+			{
+				if (!string.IsNullOrEmpty(o.AcceptanceTime))
+				{
+					time = DateTime.Parse(o.AcceptanceTime);
+					if (time.Day == now.Day)
+					{
+						if (time.Hour == now.Hour)
+						{
+							if ((now.Minute - time.Minute) < o.DeliverTime)
+							{
+								return _mapper.Map<OrderDto>(o);
+							}
+						}else if ((now.Hour - time.Hour) == 1)
+						{
+							if ((60 - time.Minute) + now.Minute < o.DeliverTime)
+							{
+								return _mapper.Map<OrderDto>(o);
+							}
+						}
+					}
+				}
+			}
+			return null;
+		}
+
+		public UserDto VerificateUser(string accountStatus,int id)
+		{
+			User u =_dbContext.users.Find(id);
+			u.AccountStatus =  accountStatus;
+			_dbContext.users.Update(u);
+			_dbContext.SaveChanges();
+			return _mapper.Map<UserDto>(u);
+		}
+
+		public List<UserDto> GetUsers()
+		{
+			List<User> users = _dbContext.users.ToList();
+			List<UserDto> ret = _mymapper.MapUserToUserDto(users);
+			return ret;
 		}
 	}
 }

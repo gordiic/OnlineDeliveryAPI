@@ -36,18 +36,25 @@ namespace WebServer.Controllers
 
 		[HttpPost]
 		[Route("getneworders")]
-		public IActionResult GetNewrOrders()
+		public IActionResult GetNewOrders()
 		{
 			return Ok(_orderService.GetNewOrders(Request.Headers));
 		}
 
-		[HttpPost]
+		[HttpGet]
 		[Route("acceptorder")]
 		public IActionResult AcceptOrder(int id, string token)
 		{
 			return Ok(_orderService.AcceptOrder(id,token));
 		}
 
+		[HttpGet]
+		[Route("getcurrentorder")]
+		public IActionResult GetCurrentOrder(string token)
+		{
+			
+			return Ok(_orderService.GetCurrentOrder(token));
+		}
 
 	}
 }

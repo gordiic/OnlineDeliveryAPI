@@ -54,5 +54,28 @@ namespace WebServer.Controllers
 			return Ok(_userService.GetProfile(token));
 		}
 
+		[HttpGet]
+		[Route("checkdeliverstatus")]
+		public IActionResult CheckDeliverStatus(string token)
+		{
+			return Ok(_userService.CheckDeliverStatus(token));
+		}
+
+
+
+		[HttpPost]
+		[Route("verificateuser")]
+		public IActionResult UpdateProfile(string accountStatus,int id)
+		{
+			return Ok(_userService.VerificateUser(accountStatus,id));
+		}
+	
+		[HttpGet]
+		[Route("getusers")]
+		public IActionResult GetUsers()
+		{
+			return Ok(_userService.GetUsers());
+		}
+
 	}
 }

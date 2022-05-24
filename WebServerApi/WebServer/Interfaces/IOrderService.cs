@@ -15,5 +15,7 @@ namespace WebServer.Interfaces
 
 		OrderDto AcceptOrder(int id, string token);
 		IEnumerable<OrderDto> GetNewOrders(IHeaderDictionary headers);
+
+		OrderDto GetCurrentOrder(string token);
 	}
 }
