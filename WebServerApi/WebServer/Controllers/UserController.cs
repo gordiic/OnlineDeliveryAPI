@@ -65,13 +65,15 @@ namespace WebServer.Controllers
 
 		[HttpPost]
 		[Route("verificateuser")]
-		public IActionResult UpdateProfile(string accountStatus,int id)
+		[Authorize(Roles = "administrator")]
+		public IActionResult VerificateUser(string accountStatus,int id)
 		{
 			return Ok(_userService.VerificateUser(accountStatus,id));
 		}
 	
 		[HttpGet]
 		[Route("getusers")]
+		[Authorize(Roles = "administrator")]
 		public IActionResult GetUsers()
 		{
 			return Ok(_userService.GetUsers());

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace WebServer.Controllers
 		}
 		[HttpPost]
 		[Route("addorder")]
+		[Authorize(Roles = "ordinaryUser")]
 		public IActionResult AddOrder(OrderDto order)
 		{
 			return Ok(_orderService.AddOrder(order, Request.Headers));
@@ -28,6 +30,7 @@ namespace WebServer.Controllers
 
 		[HttpGet]
 		[Route("getuserorders")]
+		[Authorize(Roles = "deliverer,ordinaryUser,administrator")]
 		public IActionResult GetUserOrder(string token)
 		{
 			List<OrderDto> o = _orderService.GetUserOrders(token).ToList();
@@ -36,6 +39,7 @@ namespace WebServer.Controllers
 
 		[HttpPost]
 		[Route("getneworders")]
+		[Authorize(Roles = "deliverer")]
 		public IActionResult GetNewOrders()
 		{
 			return Ok(_orderService.GetNewOrders(Request.Headers));
@@ -43,6 +47,7 @@ namespace WebServer.Controllers
 
 		[HttpGet]
 		[Route("acceptorder")]
+		[Authorize(Roles = "deliverer")]
 		public IActionResult AcceptOrder(int id, string token)
 		{
 			return Ok(_orderService.AcceptOrder(id,token));

@@ -30,7 +30,7 @@ namespace WebServer.Controllers
 
 		[HttpPost]
 		[Route("addproduct")]
-		//[Authorize(Roles="administrator")]
+		[Authorize(Roles= "administrator")]
 		public IActionResult AddProduct(ProductDto product)
 		{
 			return Ok(_productService.AddProduct(product, Request.Headers));
