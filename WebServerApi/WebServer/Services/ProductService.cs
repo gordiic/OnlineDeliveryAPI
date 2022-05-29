@@ -9,8 +9,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebServer.DB;
+using WebServer.DB.Providers;
 using WebServer.Dto;
 using WebServer.Interfaces;
+using WebServer.Mapping;
 using WebServer.Models;
 
 namespace WebServer.Services
@@ -20,32 +22,31 @@ namespace WebServer.Services
 		private readonly IMapper _mapper;
 		private readonly DataBaseUserContext _dbContext;
 		private readonly IConfigurationSection _secretKey;
+		private readonly ProductProvider _productProvider;
+		private readonly MyMapper _myMapper;
+
+
 
 		public ProductService(IMapper mapper, DataBaseUserContext dbContext, Microsoft.Extensions.Configuration.IConfiguration config)
 		{
 			_mapper = mapper;
 			_dbContext = dbContext;
 			_secretKey = config.GetSection("SecretKey");
+			_productProvider = new ProductProvider(dbContext);
+			_myMapper = new MyMapper();
+
 		}
 		public IEnumerable<ProductDto> GetProducts(IHeaderDictionary headers)
 		{
-			return _mapper.Map<List<ProductDto>>(_dbContext.products);
+			List<Product> products = _productProvider.GetProducts();
+			
+			return _myMapper.MapProductToProductDto(products);
 		}
 		public ProductDto AddProduct(ProductDto product, IHeaderDictionary headers)
 		{
 			Product newProduct = _mapper.Map<Product>(product);
-			//var handler = new JwtSecurityTokenHandler();
-			//string authHeader = headers["Authorization"];
-			//authHeader = authHeader.Replace("Bearer ", "");
-			//var jsonToken = handler.ReadToken(authHeader);
-			//var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
-			//var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
-			//int id = int.Parse(stringId);
-
-			EntityEntry ee = _dbContext.products.Add(newProduct);
-			_dbContext.SaveChanges();
-
-			return _mapper.Map<ProductDto>(ee.Entity); ;
+			Product ret = _productProvider.AddProduct(newProduct);
+			return _mapper.Map<ProductDto>(ret); 
 		}
 
 	}

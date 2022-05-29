@@ -8,10 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using WebServer.DB;
+using WebServer.DB.Providers;
 using WebServer.Dto;
 using WebServer.Interfaces;
 using WebServer.Mapping;
@@ -25,7 +28,7 @@ namespace WebServer.Services
         private readonly DataBaseUserContext _dbContext;
 		private readonly IConfigurationSection _secretKey;
 		private readonly MyMapper _mymapper;
-
+		private readonly UserProvider _userProvider;
 
 		public UserService(IMapper mapper, DataBaseUserContext dbContext, Microsoft.Extensions.Configuration.IConfiguration config)
 		{
@@ -33,6 +36,7 @@ namespace WebServer.Services
             _dbContext = dbContext;
 			_secretKey = config.GetSection("SecretKey");
 			_mymapper = new MyMapper();
+			_userProvider = new UserProvider(dbContext);
         }
 
 		
@@ -51,10 +55,8 @@ namespace WebServer.Services
 			}
 			//byte[] niz = BCrypt.Generate(BCrypt.PasswordToByteArray(newUser.Password.ToCharArray()), BCrypt.PasswordToByteArray(_secretKey.ToString().ToCharArray()),16);
 			newUser.Password= BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-			EntityEntry s = _dbContext.users.Add(newUser);
-			try{
-				_dbContext.SaveChanges();
-			}catch(Exception e)
+
+			if (_userProvider.AddUser(newUser) == null)
 			{
 				return null;
 			}
@@ -68,7 +70,7 @@ namespace WebServer.Services
 			TokenDto token = new TokenDto();
 			User newUser = _mapper.Map<User>(user);
 			string hashedPassword = newUser.Password;//treba hesovati ili na frontu treba hash
-			User registredUser = _dbContext.users.ToList().FindLast(x => newUser.UserName==x.UserName);
+			User registredUser = _userProvider.LoginUser(newUser);
 			if (registredUser!=null && BCrypt.Net.BCrypt.Verify(newUser.Password, registredUser.Password))
 			{
 				List<Claim> claims = new List<Claim>();
@@ -112,19 +114,9 @@ namespace WebServer.Services
 			int id = int.Parse(stringId);
 			newUser.Id = id;
 			newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-			try
-			{
-				//_dbContext.users.Update(newUser);
-				//var result = _dbContext.users.Where(u => u.Id == id).ToList();
-				EntityEntry ee = _dbContext.users.Update(newUser);
-				_dbContext.SaveChanges();
-				return _mapper.Map<UserDto>(ee.Entity);
 
-			}
-			catch (Exception e)
-			{
-				return null;
-			}
+			User ret = _userProvider.UpdateUser(newUser);
+			return _mapper.Map<UserDto>(ret);
 		}
 
 		public UserDto GetProfile(string token)
@@ -135,17 +127,15 @@ namespace WebServer.Services
 			var tokenS = handler.ReadToken(token) as JwtSecurityToken;
 			var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
 			int id = int.Parse(stringId);
-			
-			try
-			{
-				var result = _dbContext.users.Where(u => u.Id == id).ToList();
-				UserDto ret = _mapper.Map<UserDto>(result[0]);
-				ret.Image = Encoding.Default.GetString(result[0].Image);
-				return ret;
-			}catch(Exception e)
+	
+			User ret = _userProvider.GetUser(id);
+			if (ret == null)
 			{
 				return null;
 			}
+			UserDto ret2 = _mapper.Map<UserDto>(ret);
+			ret2.Image = Encoding.Default.GetString(ret.Image);
+			return ret2;
 		}
 
 		public OrderDto CheckDeliverStatus(string token)
@@ -156,8 +146,8 @@ namespace WebServer.Services
 			var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
 			int id = int.Parse(stringId);
 
-			var result = _dbContext.orders.Where(o => (o.DelivererId == id || o.UserId == id)).ToList() ;
-			if (result.Count == 0)
+			IEnumerable<Order> result  = _userProvider.ChechUserDeliveryStatus(id);
+			if (result.ToList().Count==0)
 			{
 				return null;
 			}
@@ -191,16 +181,23 @@ namespace WebServer.Services
 
 		public UserDto VerificateUser(string accountStatus,int id)
 		{
-			User u =_dbContext.users.Find(id);
-			u.AccountStatus =  accountStatus;
-			_dbContext.users.Update(u);
-			_dbContext.SaveChanges();
+			User u = _userProvider.VerificateUser(accountStatus,id);
+			var smtpClient = new SmtpClient("smtp.gmail.com")
+			{
+				Port = 587,
+				Credentials = new NetworkCredential("nebojsagordic@gmail.com", "nebojsagordic99"),
+				EnableSsl = true,
+			};
+
+			smtpClient.Send("nebojsagordic@gmail.com", "nebojsagordic@gmail.com", "verification", "Your account is "+accountStatus+".");
+			if (u == null)
+				return null;
 			return _mapper.Map<UserDto>(u);
 		}
 
 		public List<UserDto> GetUsers()
 		{
-			List<User> users = _dbContext.users.ToList();
+			List<User> users = _userProvider.GetUsers();
 			List<UserDto> ret = _mymapper.MapUserToUserDto(users);
 			return ret;
 		}

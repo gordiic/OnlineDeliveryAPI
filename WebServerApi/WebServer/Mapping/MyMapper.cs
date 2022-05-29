@@ -74,5 +74,23 @@ namespace WebServer.Mapping
 
 			return ret;
 		}
+
+		public List<ProductDto> MapProductToProductDto(List<Product> products)
+		{
+			List<ProductDto> ret = new List<ProductDto>();
+
+			foreach (Product o in products)
+			{
+				ProductDto p = new ProductDto();
+				p.Id = o.Id;
+				p.Ingredients = o.Ingredients;
+				p.Name = o.Name;
+				p.Price = o.Price;
+				ret.Add(p);
+			}
+
+
+			return ret;
+		}
 	}
 }

@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using WebServer.DB;
+using WebServer.DB.Providers;
 using WebServer.Dto;
 using WebServer.Interfaces;
 using WebServer.Mapping;
@@ -22,9 +23,10 @@ namespace WebServer.Services
 	{
 		private readonly IMapper _mapper;
 		private readonly MyMapper _mymapper;
-
 		private readonly DataBaseUserContext _dbContext;
 		private readonly IConfigurationSection _secretKey;
+		private readonly OrderProvider _orderProvider;
+
 
 		public OrderService(IMapper mapper, DataBaseUserContext dbContext, Microsoft.Extensions.Configuration.IConfiguration config)
 		{
@@ -32,19 +34,9 @@ namespace WebServer.Services
 			_dbContext = dbContext;
 			_secretKey = config.GetSection("SecretKey");
 			_mymapper = new MyMapper();
-		}
+			_orderProvider = new OrderProvider(dbContext);
 
-		//public async Task DeliveryThread(object order)
-		//{
-		//	Order o = order as Order;
-		//	//_dbContext.orders.Update(o);
-		//	//_dbContext.SaveChanges();
-		//	//Thread.Sleep(o.DeliverTime*1000);
-		//	Thread.Sleep(3000);
-		//	o.Done = true;
-		//	_dbContext.orders.Update(o);
-		//	await _dbContext.SaveChangesAsync(); 
-		//}
+		}
 
 		public OrderDto AcceptOrder(int id, string token)
 		{
@@ -59,39 +51,15 @@ namespace WebServer.Services
 			order.DelivererId = did;
 			order.AcceptanceTime = DateTime.Now.ToString();
 			order.Accepted = true;
-			_dbContext.Update(order);
-			_dbContext.SaveChanges();
-			//Thread newThread = new Thread(DeliveryThread);
-			//newThread.IsBackground = true;
-			//Task.Run(() => 
-			//	T(order)
-			//);
+
+			Order o = _orderProvider.UpdateOrder(order);
 
 			OrderDto ret = new OrderDto(order.Id, new List<OrderProductDto>(), order.Address, order.Comment, order.Price,
 				order.DeliverTime, order.Done, order.Accepted, order.AcceptanceTime, order.DelivererId, order.UserId);
-			//newThread.Start(order);
 
 			return ret;
 		}
-		//public  void  T(Order order)
-		//{
-			
-		//	_dbContext.Update(order);
-		//	_dbContext.SaveChanges();
-		//	Thread.Sleep(3000);
-				
-		//	Task.Run(() =>
-		//		D(order)
-		//	);
-
-		//}
-		//public void D(Order order)
-		//{			
-		//		order.Done = true;
-		//		_dbContext.orders.Update(order);
-		//		_dbContext.SaveChanges();
-			
-		//}
+		
 		public OrderDto AddOrder(OrderDto order, IHeaderDictionary headers)
 		{
 			Order newOrder = _mapper.Map<Order>(order);
@@ -110,6 +78,7 @@ namespace WebServer.Services
 				products.Add(new OrderProduct(0,op.Name,op.Ingredients,op.Price,op.Amount));
 			}
 			newOrder.Products = new List<OrderProduct>();
+
 			EntityEntry ee =  _dbContext.orders.Add(newOrder);
 			_dbContext.SaveChanges();//baca error
 
@@ -127,9 +96,7 @@ namespace WebServer.Services
 
 		public IEnumerable<OrderDto> GetNewOrders(IHeaderDictionary headers)
 		{
-			List<Order> orders = _dbContext.orders.Where(o => o.Accepted == false).Include(o => o.Products).ToList();
-
-
+			List<Order> orders = _orderProvider.GetAcceptedOrders();
 			List<OrderDto> ret = _mymapper.MapOrderToOrderDto(orders);
 
 			return ret;
@@ -147,15 +114,15 @@ namespace WebServer.Services
 			List<Order> orders;
 			if ((Dto.UserType)Enum.Parse(typeof(Dto.UserType), userType) == Dto.UserType.deliverer)
 			{
-				orders = _dbContext.orders.Where(o => o.DelivererId == id).Include(o => o.Products).ToList();
+				orders = _orderProvider.GetOrdersOfDeliverer(id);
 			}
 			else if((Dto.UserType)Enum.Parse(typeof(Dto.UserType), userType) == Dto.UserType.ordinaryUser)
 			{
-				orders = _dbContext.orders.Where(o => o.UserId == id).Include(o => o.Products).ToList();
+				orders = _orderProvider.GetOrdersOfOrdinaryUser(id);
 			}
 			else
 			{
-				orders = _dbContext.orders.Include(o => o.Products).ToList();
+				orders = _orderProvider.GetAllOrders();
 			}
 			foreach(Order o in orders)
 			{
@@ -179,7 +146,8 @@ namespace WebServer.Services
 			var stringId = tokenS.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value;
 			int id = int.Parse(stringId);
 
-			List<Order> orders = _dbContext.orders.Where(o => (o.DelivererId == id && o.Done == false)).Include(o => o.Products).ToList();
+			
+			List<Order> orders = _orderProvider.GetCurrentOrder(id);
 			if (orders[0] == null)
 				return null;
 			return _mapper.Map<OrderDto>(orders[0]);
